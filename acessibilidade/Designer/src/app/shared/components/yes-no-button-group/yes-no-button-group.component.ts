@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { UniqueIdServiceService } from '../../services/unique-id/unique-id-service.service';
-
+import { UniqueIdService } from '../../services/unique-id/unique-id.service';
 
 @Component({
   selector: 'app-yes-no-button-group',
@@ -12,30 +11,30 @@ import { UniqueIdServiceService } from '../../services/unique-id/unique-id-servi
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: forwardRef(() =>  YesNoButtonGroupComponent)
+      useExisting: forwardRef(() => YesNoButtonGroupComponent)
     }
   ]
 })
 export class YesNoButtonGroupComponent implements OnInit, ControlValueAccessor {
-
-  @Input() public value: string = null
-  @Input() public label: string = '';
+  @Input() disabled = false;
+  @Input() public value: string = null;
+  @Input() public label = '';
   @Output() public valueChange = new EventEmitter<string>();
   public id: string = null;
-  public options = YesNoButtonGroupOptiona
+  public options = YesNoButtonGroupOptions;
   public onChange = (value: string) => {};
   public onTouched = () => {};
 
-  constructor(uniqueIdService: UniqueIdServiceService) {
+  constructor(uniqueIdService: UniqueIdService) {
     this.id = uniqueIdService.generateUniqueIdWithPrefix('yes-no-button-group');
-   }
+  }
 
   ngOnInit(): void {
   }
 
- public writeValue(value: string): void {
-    this.value = value
-    this.onChange(this.value)
+  public writeValue(value: string): void {
+    this.value = value;
+    this.onChange(this.value);
     this.valueChange.emit(this.value);
   }
 
@@ -47,19 +46,16 @@ export class YesNoButtonGroupComponent implements OnInit, ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  public setDisabledState(isDisabled: boolean): void {
-    throw new Error("Method not implemented");
+  public setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 
-
-
-  public activate(value:string): void {
-      this.writeValue(value);
+  public activate(value: string): void {
+    this.writeValue(value);
   }
-
 }
 
-enum YesNoButtonGroupOptiona {
+enum YesNoButtonGroupOptions {
   YES = 'yes',
   NO = 'no'
 }
